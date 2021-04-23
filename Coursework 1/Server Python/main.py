@@ -10,27 +10,35 @@ import platform
 from selenium import webdriver
 import logging
 from seleniumwire import webdriver  
-
 import json
-
 from fake_headers import Headers
-
-
 import sqlite3
 #Линки с магазинами на поиск
+import urllib3
+import certifi
+import urllib.parse
 Links_storage = {'Wildberries': ['https://wbxsearch.wildberries.ru/exactmatch/v2/common?query=REQUEST&_app-type=sitemobile',
-'https://wbxcatalog-ru.wildberries.ru/BUCKET/catalog?PRESET&appType=2&spp=0&regions=68,75,69,40,48,33,70,64,1,4,38,30,71,22,31,66&stores=119261,122252,122256,117673,122258,122259,121631,122466,122467,122495,122496,122498,122590,122591,122592,123816,123817,123818,123820,123821,123822,124093,124094,124095,124096,124097,124098,124099,124100,124101,120762,119400,116433,507,3158,120602,6158,117501,121709,2737,117986,1699,1733,686,117413,119070,118106,119781&pricemarginCoeff=1&pricemarginMin=0&pricemarginMax=0&reg=0&emp=0&lang=ru&locale=ru&version=3&curr=rub&page=PAGE',
-'https://wbxcatalog-ru.wildberries.ru/SHARD/catalog?SUBJECT&search=NAME&page=PAGE&appType=2&spp=0&regions=68,75,69,40,48,33,70,64,1,4,38,30,71,22,31,66&stores=119261,122252,122256,117673,122258,122259,121631,122466,122467,122495,122496,122498,122590,122591,122592,123816,123817,123818,123820,123821,123822,124093,124094,124095,124096,124097,124098,124099,124100,124101,120762,119400,116433,507,3158,120602,6158,117501,121709,2737,117986,1699,1733,686,117413,119070,118106,119781&pricemarginCoeff=1&pricemarginMin=0&pricemarginMax=0&reg=0&emp=0&lang=ru&locale=ru&version=3&curr=rub']}
+								 'https://wbxcatalog-ru.wildberries.ru/BUCKET/catalog?PRESET&appType=2&spp=0&regions=68,75,69,40,48,33,70,64,1,4,38,30,71,22,31,66&stores=119261,122252,122256,117673,122258,122259,121631,122466,122467,122495,122496,122498,122590,122591,122592,123816,123817,123818,123820,123821,123822,124093,124094,124095,124096,124097,124098,124099,124100,124101,120762,119400,116433,507,3158,120602,6158,117501,121709,2737,117986,1699,1733,686,117413,119070,118106,119781&pricemarginCoeff=1&pricemarginMin=0&pricemarginMax=0&reg=0&emp=0&lang=ru&locale=ru&version=3&curr=rub&page=PAGE',
+								 'https://wbxcatalog-ru.wildberries.ru/SHARD/catalog?SUBJECT&search=NAME&page=PAGE&appType=2&spp=0&regions=68,75,69,40,48,33,70,64,1,4,38,30,71,22,31,66&stores=119261,122252,122256,117673,122258,122259,121631,122466,122467,122495,122496,122498,122590,122591,122592,123816,123817,123818,123820,123821,123822,124093,124094,124095,124096,124097,124098,124099,124100,124101,120762,119400,116433,507,3158,120602,6158,117501,121709,2737,117986,1699,1733,686,117413,119070,118106,119781&pricemarginCoeff=1&pricemarginMin=0&pricemarginMax=0&reg=0&emp=0&lang=ru&locale=ru&version=3&curr=rub'],
+				 'my-shop':		['http://my-shop.ru/cgi-bin/shop2.pl?q=search&sort=z&page=PAGE&f14_6=REQUEST',
+					  	    	 'https://my-shop.ru/cgi-bin/shop2.pl?q=product&id=3143442'],
+				 'eldorado':	['https://www.eldorado.ru/sem/v3/a408/products?rootRestrictedCategoryId=0&query=REQUEST&orderField=popular&limit=50&offset=PAGE&regionId=11324',
+								 'https://api.retailrocket.net/api/1.0/partner/5ba1feda97a5252320437f20/items/?itemsIds=71112985&stock=&format=json'],
+				 'aliexpress':	['https://aliexpress.ru/glosearch/api/product?trafficChannel=main&d=y&CatId=0&SearchText=REQUEST&ltype=wholesale&SortType=default&page=PAGE&origin=y']
+					  	    	 }
+					  	    	 # Wildberries 100
+					  	    	 # my-shop 36
+					  	    	 # eldorado 50
+					  	    	 # aliexpress 60
 
 #Поисковой запрос 
 start =datetime.datetime.now()
 connect = sqlite3.connect("data.db") # или :memory: чтобы сохранить в RAM
+connect.isolation_level= 'DEFERRED'
+connect.execute('''PRAGMA synchronous = OFF''')
+connect.execute('''PRAGMA journal_mode = OFF''')
+# connect = sqlite3.connect(":memory:")
 cursor = connect.cursor()
- 
-# Создание таблицы
-# cursor.execute("""CREATE TABLE items
-#                   (id text, subjectid text, name text, brand text, brandId text, sale text, priceU text, salePriceU text, pics text, rating text, feedbacks text, history text,last_history text )
-#                """)
 
 try:
 	cursor.execute("""CREATE TABLE items
@@ -40,6 +48,7 @@ except sqlite3.OperationalError:
 	print("БД уже создана")
 else:
 	print("Создание БД")
+# Подогнать бд
 
 
 class Create_a_database_based_on_the_search_query:
@@ -47,19 +56,23 @@ class Create_a_database_based_on_the_search_query:
 		self.request_name = request_name
 		self.links_storage = links_storage
 		self.session = requests.Session()
+		headers= Headers(
+        browser="chrome",
+        os="win", 
+        headers=True 
+    	)
 		# self.session.headers = {
 		# 	'user-agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.86 Mobile Safari/537.36',
+		# 	'Accept': 'application/json',
 		# 	'accept-language':'ru',
+
+
 		# }
-		headers= Headers(
-        browser="chrome",  # Generate only Chrome UA
-        os="win",  # Generate ony Windows platform
-        headers=True  # generate misc headers
-    	)
 
 		self.session.headers = headers.generate()
 		self.pages = 1
 		self.result = []
+
 	def WildBerries_add(self,a):
 		newurl = self.links_storage['Wildberries'][0].replace("REQUEST",str(self.request_name))
 		res = self.session.get(url=newurl)
@@ -70,71 +83,146 @@ class Create_a_database_based_on_the_search_query:
 			print("Ничего не найдено")
 		else:
 			i=0
-			while i<100:
+			while i<20:
+				staTime = datetime.datetime.now()
 				print('Страница ', i)
-
 				if data_find_filters_decode["query"].find("subject=") != -1:
-					# print('subject _ ',data_find_filters_decode["query"])
 					newurl = self.links_storage['Wildberries'][2].replace("PAGE",str(i+1)).replace("SHARD",str(data_find_filters_decode["shardKey"])).replace("SUBJECT",str(data_find_filters_decode["query"])).replace("NAME",str(data_find_filters_decode["name"]))
-					res = self.session.get(url=newurl)
-					res.raise_for_status()
-					# print(res.text)
-
 				elif data_find_filters_decode["query"].find("preset=") != -1:
-					# print('preset _ ',data_find_filters_decode["query"])
 					newurl = self.links_storage['Wildberries'][1].replace("PAGE",str(i+1)).replace("BUCKET",str(data_find_filters_decode["shardKey"])).replace("PRESET",str(data_find_filters_decode["query"]))
-					res = self.session.get(url=newurl)
-					res.raise_for_status()
+				res = self.session.get(url=newurl)
+				res.raise_for_status()
 				data_decode = []
 				data_decode = json.loads(res.text)
-				# print(data_decode)
-		
 				last_history = str(datetime.datetime.now()) + ';'
 				if len(data_decode['data']['products']) == 0:
 					break
-					
 				for item in data_decode['data']['products']:
-					# print(item)# Проверка на наличие свежего и добавление в БД
-					
 					# Проверка на наличие, если есть то обновляет цену скидка отзывы и тд, обновляет историю плюсуя к старой, а в конец дает сегодняшнюю
 					info = cursor.execute('SELECT * FROM items WHERE id=?', (item["id"], ))
 					if info.fetchone() is None: 
 							#Делаем когда нету человека в бд
 							history = last_history
 							data = (item["id"], item["subjectId"],item["name"],item["brand"],item["brandId"],item["sale"],item["priceU"],item["salePriceU"],item["pics"],item["rating"],item["feedbacks"],history,last_history) 
-					
 							# Вставляем данные в таблицу
 							cursor.execute("INSERT INTO items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", data)
-
 					else:
 							#Делаем когда есть человек в бд
 							info = cursor.execute('SELECT * FROM items WHERE id=?', (item["id"], ))
 							records = cursor.fetchall()
-
 							history = str(records[0]).replace('(','').replace(')','').split(',') # Добавить историю цен
 							history = history[11].replace("'",'').strip() + '\n' + last_history
 							cursor.execute('UPDATE items SET sale = ?,  priceU = ?,salePriceU = ?,rating = ?,feedbacks = ?,history = ?,last_history = ? WHERE id = ?',( item["sale"],item["priceU"],item["salePriceU"],item["rating"],item["feedbacks"],history,last_history,item["id"], ))
-					connect.commit()
 				i+=1
 
-				# Сохраняем изменения
-				# connect.commit()
+
+
+	def myShop_add(self,a): # Добавить доп ячейки и добав в БД
+		i=0
+		newurl = self.links_storage['my-shop'][0].replace("REQUEST",urllib.parse.quote(str(self.request_name)))
+		http = urllib3.PoolManager(ca_certs=certifi.where())
+		payload = {'f14_6': self.request_name}
+		encoded_data = json.dumps(payload).encode('utf-8')
+		bodyM = urllib.parse.quote(str(self.request_name))
+		while i<10:
+			print('Страница ', i)
+			newurl_In = newurl.replace("PAGE",str(i+1))
+			resp = http.request(
+				'POST',
+				newurl_In,
+				body=encoded_data,
+				headers={'Content-Type': 'application/json'})
+			data = json.loads(resp.data.decode('utf-8'))
+			for item in data['products']:
+				print(item['product_id'],item['cost'],item['title'],item['ga_item']['id'],item['ga_item']['brand'])
+
+			i+=1
+
+	def Eldorado_add(self,a): # Добавить доп ячейки и добав в БД
+			newurl = self.links_storage['eldorado'][0].replace("REQUEST",str(self.request_name))
+			i=0
+			while i<20:
+
+				newurl_In = newurl.replace("PAGE",str(i*50))
+				# print(newurl_In)
+				res = self.session.get(url=newurl_In)
+				res.raise_for_status()
+				data_find_filters_decode = []
+				data_find_filters_decode = json.loads(res.text)
+				print('Страница ', i)
+
+
+				for item in data_find_filters_decode['data']:
+					print(item['id'],item['name'],item['shortName'],item['productId'],item['brandName'],item['price'],item['oldPrice'],item['rating'])
+
+
+				i+=1
+
+
+		# for block in data:
+		# 	print("-----------########",data)
+		# data_find_filters_decode = []
+		# data_find_filters_decode = json.loads(res.text)
+		# print(data_find_filters_decode)
+
+		# if len(data_find_filters_decode) == 0: # Пустой ответ от Wildberries
+		# 	print("Ничего не найдено")
+		# else:
+		# 	i=0
+		# 	while i<20:
+		# 		staTime = datetime.datetime.now()
+		# 		print('Страница ', i)
+		# 		if data_find_filters_decode["query"].find("subject=") != -1:
+		# 			newurl = self.links_storage['Wildberries'][2].replace("PAGE",str(i+1)).replace("SHARD",str(data_find_filters_decode["shardKey"])).replace("SUBJECT",str(data_find_filters_decode["query"])).replace("NAME",str(data_find_filters_decode["name"]))
+		# 		elif data_find_filters_decode["query"].find("preset=") != -1:
+		# 			newurl = self.links_storage['Wildberries'][1].replace("PAGE",str(i+1)).replace("BUCKET",str(data_find_filters_decode["shardKey"])).replace("PRESET",str(data_find_filters_decode["query"]))
+		# 		res = self.session.get(url=newurl)
+		# 		res.raise_for_status()
+		# 		data_decode = []
+		# 		data_decode = json.loads(res.text)
+		# 		last_history = str(datetime.datetime.now()) + ';'
+		# 		if len(data_decode['data']['products']) == 0:
+		# 			break
+		# 		for item in data_decode['data']['products']:
+		# 			# Проверка на наличие, если есть то обновляет цену скидка отзывы и тд, обновляет историю плюсуя к старой, а в конец дает сегодняшнюю
+		# 			info = cursor.execute('SELECT * FROM items WHERE id=?', (item["id"], ))
+		# 			if info.fetchone() is None: 
+		# 					#Делаем когда нету человека в бд
+		# 					history = last_history
+		# 					data = (item["id"], item["subjectId"],item["name"],item["brand"],item["brandId"],item["sale"],item["priceU"],item["salePriceU"],item["pics"],item["rating"],item["feedbacks"],history,last_history) 
+		# 					# Вставляем данные в таблицу
+		# 					cursor.execute("INSERT INTO items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", data)
+		# 			else:
+		# 					#Делаем когда есть человек в бд
+		# 					info = cursor.execute('SELECT * FROM items WHERE id=?', (item["id"], ))
+		# 					records = cursor.fetchall()
+		# 					history = str(records[0]).replace('(','').replace(')','').split(',') # Добавить историю цен
+		# 					history = history[11].replace("'",'').strip() + '\n' + last_history
+		# 					cursor.execute('UPDATE items SET sale = ?,  priceU = ?,salePriceU = ?,rating = ?,feedbacks = ?,history = ?,last_history = ? WHERE id = ?',( item["sale"],item["priceU"],item["salePriceU"],item["rating"],item["feedbacks"],history,last_history,item["id"], ))
+		# 		i+=1
 
 
 
-			# print(self.session.headers)
 
 
-			# print(data_find_filters_decode["query"])
 
-	def search_start(self):
+
+
+
+	def search_start(self): # Разбить на потоки, добавить или убрать алик, решить проблему с поштучной проверкой
 		self.WildBerries_add(1)
+		self.myShop_add(1)
+		self.Eldorado_add(1)
 		# WildBerries = Thread(target=self.WildBerries_add, args=(1, ))
 		# WildBerries.start()
 		# Разные магазины ... 
+		connect.commit()
+		print("commit")
 
 
-Create_a_database_based_on_the_search_query('Бомба').search_start()
+
+		# ТЕСТ ЗАПРОСЫ
+Create_a_database_based_on_the_search_query('Крем').search_start()
 # Create_a_database_based_on_the_search_query('Поиск').search_start()
 # Create_a_database_based_on_the_search_query('Машина').search_start()
 # Create_a_database_based_on_the_search_query('а').search_start()
@@ -142,7 +230,7 @@ Create_a_database_based_on_the_search_query('Бомба').search_start()
 # Create_a_database_based_on_the_search_query('стрельба').search_start()
 # Create_a_database_based_on_the_search_query('книга').search_start()
 print('end')
-print('Завершил сеанс за ', (datetime.datetime.now() - start).microseconds)
+print('Завершил сеанс за ', (datetime.datetime.now() - start))
 	# def Get_fullLink(self):
 
 	# 	chromedriver_path = 'C:\swdriver\chromedriver.exe'
