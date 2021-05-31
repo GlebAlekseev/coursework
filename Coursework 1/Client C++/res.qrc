@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>style.css</file>
+        <file>img_pos/1.jpg</file>
+        <file>include/cpp_httplib/httplib.h</file>
+        <file>include/nlohmann/json.hpp</file>
+        <file>img_pos/p_def.png</file>
+        <file>img_pos/rightarrow.png</file>
+        <file>img_pos/dns_logo_dark.png</file>
+        <file>img_pos/dns_logo_light.png</file>
+        <file>img_pos/ms_logo_dark.png</file>
+        <file>img_pos/ms_logo_light.png</file>
+        <file>img_pos/sort12.png</file>
+        <file>img_pos/sort21.png</file>
+        <file>img_pos/sortAZ.png</file>
+        <file>img_pos/sortZA.png</file>
+        <file>img_pos/w_logo_dark.png</file>
+        <file>img_pos/w_logo_light.png</file>
+        <file>img_pos/open.png</file>
+    </qresource>
+</RCC>
