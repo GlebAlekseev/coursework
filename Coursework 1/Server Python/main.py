@@ -267,7 +267,8 @@ class MainStream():
 		# print("F",sugst)
 		for item in resR:
 			for sug in sugst:
-				if item["name"].find(sug) != -1: # нашло
+
+				if item["name"].find(sug[:-2]) != -1: # нашло
 					if item["Mid"].find("W_iD") != -1 and SHOPW:
 						resF.append(item)
 					if item["Mid"].find("E_iD") != -1 and SHOPD:
@@ -493,14 +494,16 @@ class MainStream():
 					name = str(sd["product"]["ga_item"]["name"])
 					brand = str(sd["product"]["ga_item"]["brand"])
 					price = str(sd["product"]["ga_item"]["price"])
-					url_img = "http://" + str(sd["product"]["images"][0]["preview"]["href"])
+					url_img = "http:" + str(sd["product"]["images"][0]["preview"]["href"][0])
 					url_profile = "https://my-shop.ru/shop/product/"+str(sd["product"]["ga_item"]["id"])+".html"
 					url_logo_brand = ""
 
 
 				if len(sd) == 0:
 					continue
-				fin_data_checked.append((Mid,name,brand,price,url_img,url_profile,url_logo_brand))	
+				if name.find(request_text) !=-1:
+					fin_data_checked.append((Mid,name,brand,price,url_img,url_profile,url_logo_brand))	
+					print(url_img)
 		get_data(resF)
 		connect.close()
 		# redisDB = redis.Redis(db=1)

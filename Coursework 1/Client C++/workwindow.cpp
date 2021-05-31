@@ -1050,7 +1050,12 @@ for(int i = 0;i<docT.array().size();i++) {
 //                        qDebug() << "cost " << doc[i]["price"].toString();
 //                        qDebug() << "cost " << doc[i]["price"].toString().toDouble();
 //                        qDebug() << "cost = " <<docT[i][3].toDouble();
-                        itemIn->setProperty("plainText",QVariant(QString::number(docT[i][3].toDouble()).append(" ₽")));
+                        if (docT[i][0].toString().contains("M_iD",Qt::CaseInsensitive)){
+                            itemIn->setProperty("plainText",QVariant(docT[i][3].toString().append(" ₽")));
+                        }else{
+                            itemIn->setProperty("plainText",QVariant(QString::number(docT[i][3].toDouble()).append(" ₽")));
+                        }
+
 
                         QTextEdit *cost_ = findChild<QTextEdit *>(itemIn->objectName());
                         cost_->setAlignment(Qt::AlignRight);
@@ -2095,7 +2100,13 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
             }
             else if(item->objectName().contains("cost", Qt::CaseInsensitive)){
                 qDebug() << "======docIn[3]" << QString::number(docIn[3].toDouble());
-                    item->setProperty("plainText",QVariant(QString("Цена: "+QString::number(docIn[3].toDouble()).append(" ₽"))));
+//                    item->setProperty("plainText",QVariant(QString("Цена: "+QString::number(docIn[3].toDouble()).append(" ₽"))));
+
+                    if (docIn[0].toString().contains("M_iD",Qt::CaseInsensitive)){
+                        item->setProperty("plainText",QVariant(QString("Цена: "+docIn[3].toString().append(" ₽"))));
+                    }else{
+                        item->setProperty("plainText",QVariant(QString("Цена: "+QString::number(docIn[3].toDouble()).append(" ₽"))));
+                    }
 
          }
 
