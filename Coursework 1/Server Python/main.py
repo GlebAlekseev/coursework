@@ -755,7 +755,7 @@ class MainStream():
 
 		Collectors().run(self.New_updated_data)
 		Updating_tracked_data().run()
-		# Updating_Master_data().run(self.New_updated_data) # NewData это данные которые нужно сохранять # ИСПОЛЬЗОВАТЬ ТОЛЬКО КОГДА ИСПРАВЛЮ ПОДБОР КЛЮЧ СЛОВ ПОИСКА
+		Updating_Master_data().run(self.New_updated_data) # NewData это данные которые нужно сохранять # ИСПОЛЬЗОВАТЬ ТОЛЬКО КОГДА ИСПРАВЛЮ ПОДБОР КЛЮЧ СЛОВ ПОИСКА
 
 
 
