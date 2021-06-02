@@ -55,6 +55,18 @@ workWindow::workWindow(QWidget *parent) :
 
     ui->img_r->setPixmap(pic3);
     ui->img_r->setProperty("styleSheet",QVariant("margin-left:40px;"));
+
+
+
+
+    QPixmap picF("://img_pos//refresh.png");
+    QSize PicSizeF_(25, 25);
+    picF = picF.scaled(PicSizeF_,Qt::KeepAspectRatio);
+
+    ui->trefresh_->setPixmap(picF);
+ui->trefresh_->setProperty("styleSheet",QVariant("margin-top:5px;"));
+
+
     ui->t_img_r_2->setPixmap(pic3);
     ui->t_img_r_2->setProperty("styleSheet",QVariant("margin-left:40px;"));
 
@@ -192,7 +204,9 @@ send_to_Tracked();
        ui->tsort12_->installEventFilter(this);
        ui->tm_l_->installEventFilter(this);
        ui->tw_l_->installEventFilter(this);
-       ui->td_s_->installEventFilter(this);
+//       ui->td_s_->installEventFilter(this);
+
+       ui->trefresh_->installEventFilter(this);
 
        QUrl url("http://127.0.0.1:5000/get_parse_page");
        QNetworkRequest request(url);
@@ -257,7 +271,7 @@ send_to_Tracked();
            QNetworkReply *repl= qobject_cast<QNetworkReply *>(sender());
            QByteArray content= repl->readAll();
            QJsonDocument doc = QJsonDocument::fromJson(content);
-           qDebug() << "!!!!!!!!!!!" << doc;
+//           qDebug() << "!!!!!!!!!!!" << doc;
            if(doc[0].toString().count() != 0){
               STYLE_COLOR_W = doc[0].toString();
                ui->w_style->setText(STYLE_COLOR_W.toString());
@@ -361,9 +375,9 @@ send_to_Tracked();
                     replys,&QNetworkReply::finished,this, [=]() {
                                      QNetworkReply *reply= qobject_cast<QNetworkReply *>(sender());
                                      QByteArray content= reply->readAll();
-                                     qDebug() << QString(content.data());
+//                                     qDebug() << QString(content.data());
                                      if(QString(content.data()) == "212"){
-                                     ui->is_add_lbl->setPlainText("Server: Ошибка");
+                                     ui->is_add_lbl->setPlainText("Неверный Mid");
                                      }else if(QString(content.data())=="211"){
                                      ui->is_add_lbl->setPlainText("Уже добавлено");
                                      }else if(QString(content.data())=="213"){
@@ -446,7 +460,7 @@ send_to_Tracked();
                         replys,&QNetworkReply::finished,this, [=]() {
                                          QNetworkReply *reply= qobject_cast<QNetworkReply *>(sender());
                                          QByteArray content= reply->readAll();
-                                         qDebug() << QString(content.data());
+//                                         qDebug() << QString(content.data());
 
                                          if(QString(content.data()) == "711"){
                                          ui->msg_im->setPlainText("Вы не выполнили условие");
@@ -481,23 +495,7 @@ send_to_Tracked();
 
 
 //                text_key
-                QUrl url_2("http://127.0.0.1:5000/get_keyVk");
-                QNetworkRequest request_2(url_2);
-                request_2.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-
-
-                QJsonObject objObject_2;
-                objObject_2.insert("login",login);
-                QJsonDocument doc_2(objObject_2);
-                QByteArray data_2 = doc_2.toJson();
-                QNetworkReply* replys2=  manager->post(request_2,data_2);
-                connect(replys2,&QNetworkReply::finished,this, [=]() {
-                    QNetworkReply *repl= qobject_cast<QNetworkReply *>(sender());
-                    QByteArray content= repl->readAll();
-
-                         ui->text_key->setText("Вступи в сообщество vk и напиши боту свой ключ: "+QString(content.data()));
-                });
 }
 
 workWindow::~workWindow()
@@ -516,6 +514,26 @@ void workWindow::DopenAndApply(){
     settings.endGroup();
 
     ui->name_login->setText(login);
+    send_to_Tracked();
+
+    QUrl url_2("http://127.0.0.1:5000/get_keyVk");
+    QNetworkRequest request_2(url_2);
+    request_2.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+
+
+    QJsonObject objObject_2;
+    objObject_2.insert("login",login);
+    QJsonDocument doc_2(objObject_2);
+    QByteArray data_2 = doc_2.toJson();
+    QNetworkReply* replys2=  manager->post(request_2,data_2);
+    connect(replys2,&QNetworkReply::finished,this, [=]() {
+        QNetworkReply *repl= qobject_cast<QNetworkReply *>(sender());
+        QByteArray content= repl->readAll();
+
+             ui->text_key->setText("Вступи в сообщество vk и напиши боту свой ключ: "+QString(content.data()));
+    });
+
     this->show();
 }
 
@@ -703,10 +721,10 @@ void workWindow::on_go_main_s_clicked()// Отправка запрос ана �
     objObject.insert("SHOPW",SHOPW);
     objObject.insert("SHOPD",SHOPD);
     objObject.insert("SHOPM",SHOPM);
-    qDebug() << HOWMUCH<< "HOWMUCH HOWMUCH HOWMUCH";
+//    qDebug() << HOWMUCH<< "HOWMUCH HOWMUCH HOWMUCH";
     objObject.insert("HOWMUCH",HOWMUCH);
 
-qDebug() << "HOWMUCH"<<HOWMUCH;
+//qDebug() << "HOWMUCH"<<HOWMUCH;
 
 
     QJsonDocument doc(objObject);
@@ -863,16 +881,16 @@ void workWindow::DrawTracked(){
 
 int i_begin = (PAGE_TRACKED-1)*page_per_time; // page_per_time = 60
 int i_end = PAGE_TRACKED*page_per_time;
-qDebug() << "PAGGGG" << PAGE_TRACKED << page_per_time << i_begin << i_end;
+//qDebug() << "PAGGGG" << PAGE_TRACKED << page_per_time << i_begin << i_end;
 
 
  setUpdatesEnabled(false);
 // прячем все body
 
 
-qDebug() << "DRAWTRACKED";
+//qDebug() << "DRAWTRACKED";
 foreach(auto *item,ui->scrollAreaWidgetContents_t->children()){
-    qDebug() << "every child";
+//    qDebug() << "every child";
 //   qDebug() << item;
     QString name_item= item->objectName();
     /*name_item.contains("body__", Qt::CaseInsensitive)*/; // если содержит подстроку body, если нужный элемент.
@@ -958,11 +976,11 @@ int counter_block = 1;
     if(0>=docT.array().size()){
     ui->tnot_found_lbl_->setProperty("visible",QVariant(true));
     }
-qDebug()<<"se1" << i_begin << i_end;
+//qDebug()<<"se1" << i_begin << i_end;
 for(int i = 0;i<docT.array().size();i++) {
 
     if(i>=i_begin and i_end>i){// если входит в диапазон
-    qDebug() << i << counter_block;
+//    qDebug() << i << counter_block;
 
         // прохожусь циклом и ищу боди под counter
 
@@ -1502,7 +1520,7 @@ qint16 get_digit(QString str){
 void workWindow::add_product(QJsonValue docIn,QWidget* body_){
 //    qDebug() << "addprofuct";
 // отправка на сервер дока выше
-qDebug() << "debug" << docIn["Mid"];
+//qDebug() << "debug" << docIn["Mid"];
 
 
 // берем адрес введенный в текстовое поле
@@ -1539,7 +1557,7 @@ QNetworkReply* reply=  manager->post(request,data);
 // Подписываемся на сигнал о готовности загрузки
 //connect( reply, SIGNAL(finished()),
 //         this, SLOT(send_trackInfo()) );
-qDebug() << "AS" <<body_;
+//qDebug() << "AS" <<body_;
 connect(
     reply,&QNetworkReply::finished,this, [=]() { this->send_trackInfo(docIn,body_); }
 );
@@ -1549,7 +1567,7 @@ connect(
 }
 void workWindow::delete_product(QJsonValue docIn,QWidget* body_){
 //    qDebug() << "deleteprofuct";
-qDebug() << "debug" << docIn["Mid"];
+//qDebug() << "debug" << docIn["Mid"];
 
 QUrl url("http://127.0.0.1:5000/delete_to_tracked");
 
@@ -1575,7 +1593,7 @@ QJsonDocument doc(objObject);
 QByteArray data = doc.toJson();
 
 QNetworkReply* reply=  manager->post(request,data);
-qDebug() << "AS" <<body_;
+//qDebug() << "AS" <<body_;
 connect(
     reply,&QNetworkReply::finished,this, [=]() { this->send_trackInfo(docIn,body_); }
 );
@@ -1706,7 +1724,7 @@ void workWindow::is_tracking(QJsonValue mid)
     bool status = false;
 
    connect(
-        reply,&QNetworkReply::finished,this, [&]()   { QByteArray st = qobject_cast<QNetworkReply *>(sender())->readAll();if(QString(st) == "601"){status=true;qDebug()<<"statusInIs"<<status;} }
+        reply,&QNetworkReply::finished,this, [&]()   { QByteArray st = qobject_cast<QNetworkReply *>(sender())->readAll();if(QString(st) == "601"){status=true;} }
     );
 
     // ставлю таймер на 10 сек, из connect передается сигнал, тут ождиается, как получен таймер уходит
@@ -1860,7 +1878,7 @@ void workWindow::result_get_history(QObject* sender,QObject* table){
 }
 
 void workWindow::draw_rBlock(QJsonValue docIn,QWidget* body_,bool clear = false){
-    qDebug() << "DRAW_RBLOCK";
+//    qDebug() << "DRAW_RBLOCK";
 //    qDebug() << "clear"<< clear << body_;
     clear_connects_btn(body_);
     if(clear){
@@ -1873,7 +1891,7 @@ void workWindow::draw_rBlock(QJsonValue docIn,QWidget* body_,bool clear = false)
 //    qDebug() << "fin clear/" << docIn<<body_;
 
 
-    qDebug() << "DRAW_RBLOC2K";
+//    qDebug() << "DRAW_RBLOC2K";
     QWidget *widg = findChild<QWidget *>(body_->objectName());
 //                QPalette colr;
 //                colr.setColor();
@@ -1884,7 +1902,7 @@ void workWindow::draw_rBlock(QJsonValue docIn,QWidget* body_,bool clear = false)
     // отрисовывает правую часть
 //    qDebug() << docIn;
 //qDebug()<<ui->verticalWidget->children();
-qDebug() << "DRAW_RBLOCK3";
+//qDebug() << "DRAW_RBLOCK3";
 if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
     foreach(auto *item,ui->verticalWidget->children()){
         if(!item->objectName().contains("brnd_imge", Qt::CaseInsensitive) and !item->objectName().contains("cst_full", Qt::CaseInsensitive)
@@ -1967,7 +1985,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
 
        }
         else if(item->objectName().contains("send_notifications", Qt::CaseInsensitive)){
-            qDebug()<< "send norification";
+//            qDebug()<< "send norification";
             QCheckBox *chbx = findChild<QCheckBox *>(item->objectName());
             // утсановить текущее состояние
             // сделать команду гет на соединение и получить текущее состояние для пользвотаеля
@@ -2055,7 +2073,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
 //    qDebug() << "DOCIN"<<docIn;
     foreach(auto *item,ui->verticalWidget_2->children()){
 
-        qDebug() << "NAME = " << item->objectName();
+//        qDebug() << "NAME = " << item->objectName();
             if(!item->objectName().contains("brnd_imge", Qt::CaseInsensitive) and !item->objectName().contains("cst_full", Qt::CaseInsensitive)
                      and !item->objectName().contains("sale", Qt::CaseInsensitive)){
             item->setProperty("visible",QVariant(true));
@@ -2144,7 +2162,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
 
 //           }
             else if(item->objectName().contains("send_notifications", Qt::CaseInsensitive)){
-                qDebug()<< "send norification";
+//                qDebug()<< "send norification";
                 QCheckBox *chbx = findChild<QCheckBox *>(item->objectName());
                 // утсановить текущее состояние
                 // сделать команду гет на соединение и получить текущее состояние для пользвотаеля
@@ -2172,7 +2190,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
                         reply,&QNetworkReply::finished,this, [=]() { this->result_tracking(sender(),chbx->objectName(),docIn); }
                     );
 
-            qDebug()<< "send norification end";
+//            qDebug()<< "send norification end";
             }
 
 
@@ -2199,7 +2217,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
                     reply,&QNetworkReply::finished,this, [=]() { this->result_get_history(sender(),item); }
                 );
 
-                qDebug()<< "tble end";
+//                qDebug()<< "tble end";
             }
             else if(item->objectName().contains("open_r", Qt::CaseInsensitive)){
 //                item->setProperty("plainText",QVariant(QString("Цена: "+docIn[3].toString().append(" Р"))));
@@ -2209,7 +2227,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
                 connect(btn_open_,&QPushButton::clicked,this,[=](){QDesktopServices::openUrl(QUrl(docIn[5].toString()));});
                 connects_btnOpenT.append(btn_open_);
 
-                 qDebug()<< "open end";
+//                 qDebug()<< "open end";
             }
 
 
@@ -2227,10 +2245,10 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
                  qDebug()<< "img end";
                 }
         }
-    qDebug() << "end1";
+//    qDebug() << "end1";
 
             }
-    qDebug() << "end2";
+//    qDebug() << "end2";
     }
 
 
@@ -2239,7 +2257,7 @@ if(!body_->objectName().contains("t_",Qt::CaseInsensitive)){
 
 
 void  workWindow::change_tracking(bool b,QJsonValue docIn,bool is_set,QObject* itemIn){
-        qDebug() << "change_tracking " << b;
+//        qDebug() << "change_tracking " << b;
 
         QUrl url("http://127.0.0.1:5000/tracking");
         QNetworkRequest request(url);
@@ -2297,7 +2315,7 @@ void workWindow::result_tracking(QObject* obj,QString objName,QJsonValue docIn){
             }
             else if (QString(content.data()) == "900"){ // Успешная устанвока значени
                 chbx->setVisible(true);
-                qDebug() << "Установлено";
+//                qDebug() << "Установлено";
 
                 //redraw draw_rBlock
 
@@ -2316,7 +2334,7 @@ void workWindow::result_tracking(QObject* obj,QString objName,QJsonValue docIn){
             }
             else if (QString(content.data()) == "901" ){ // позиция не в отслежке set
                 chbx->setVisible(false);
-                qDebug() << "НЕ Установлено";
+//                qDebug() << "НЕ Установлено";
                 // ничего
                 // текст enabled false
 
@@ -2330,21 +2348,21 @@ void workWindow::result_tracking(QObject* obj,QString objName,QJsonValue docIn){
                 chbx->setVisible(true);
                if(QString(content.data()) == "0"){
                 chbx->setCheckState(Qt::Unchecked);
-                qDebug() << "set value " << QString(content.data());
+//                qDebug() << "set value " << QString(content.data());
                 connects_chBox.append(chbx);
     //            qDebug() << "connects_chBox"<<connects_chBox ;
                 connect(
                     chbx,&QCheckBox::stateChanged,this, [=]() { change_tracking(chbx->checkState(),docIn,true,chbx);}); // изменяет статус по нажатию // выполняет обновление отрисовки кdrawvlock
-                qDebug() << "set value end";
+//                qDebug() << "set value end";
                }
                else if (QString(content.data()) == "1"){
                 chbx->setCheckState(Qt::Checked);
-                qDebug() << "set value " ;
+//                qDebug() << "set value " ;
                 connects_chBox.append(chbx);
     //            qDebug() << "connects_chBox"<<connects_chBox ;
                 connect(
                     chbx,&QCheckBox::stateChanged,this, [=]() { change_tracking(chbx->checkState(),docIn,true,chbx);}); // изменяет статус по нажатию // выполняет обновление отрисовки кdrawvlock
-                qDebug() << "set value end";
+//                qDebug() << "set value end";
 
                }
 
@@ -2462,6 +2480,13 @@ QString stWorda;
     //        QLabel *sortAZ = findChild<QLabel*>(obj->objectName());
     //        sortAZ->setPixmap();
 
+
+        }
+        else if(obj->objectName()=="trefresh_"){
+//        DrawTracked();
+//        send_to_Tracked();
+            qDebug() << "Обновление";
+send_to_Tracked();
 
         }
         else if(obj->objectName()=="sort12"){

@@ -54,7 +54,7 @@ public:
     bool TSORT12 = true;
 
     bool TSHOPW = true;
-    bool TSHOPD = true;
+    bool TSHOPD = false;
     bool TSHOPM = true;
 
     QWidget* CURRENT_TRACKED_WIDGET = nullptr;

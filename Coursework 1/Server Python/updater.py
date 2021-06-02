@@ -121,7 +121,7 @@ class Updating_tracked_data:
 			else:
 				# print("Создание БД")
 				pass
-			cursor.execute('SELECT * FROM user_tracking WHERE tracking=?',(0,))
+			cursor.execute('SELECT * FROM user_tracking WHERE tracking=?',(1,))
 			Tracked_data = cursor.fetchall()
 			session = requests.Session()
 			headers = Headers(
@@ -147,7 +147,7 @@ class Updating_tracked_data:
 				sd = json.loads(res.text)
 				if str(data[2]).find("W_iD") != -1:
 					Mid = 'W_iD'+str(sd["data"]["products"][0]["id"])
-					price = int(sd["data"]["products"][0]["priceU"])/100
+					price = int(sd["data"]["products"][0]["salePriceU"])/100
 						
 				if str(data[2]).find("E_iD") != -1:
 					if len(sd) == 0:
@@ -175,7 +175,9 @@ class Updating_tracked_data:
 					# print(OldPrice)
 					# print("До Chech")
 					pricez = int(float(price))
+					print("Mid",Mid,pricez,OldPrice)
 					if float(pricez) != float(OldPrice): # Если цена текущая не равна прошлой,  в iem_hist по иду data[2] найти айтем
+						print("vk mes")
 						# pass
 						# Вызов уведомителя
 						# print("#CHECK",pricez,OldPrice)

@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>style.css</file>
-        <file>img_pos/1.jpg</file>
         <file>include/cpp_httplib/httplib.h</file>
         <file>include/nlohmann/json.hpp</file>
         <file>img_pos/p_def.png</file>
@@ -16,6 +15,6 @@
         <file>img_pos/sortZA.png</file>
         <file>img_pos/w_logo_dark.png</file>
         <file>img_pos/w_logo_light.png</file>
-        <file>img_pos/open.png</file>
+        <file>img_pos/refresh.png</file>
     </qresource>
 </RCC>

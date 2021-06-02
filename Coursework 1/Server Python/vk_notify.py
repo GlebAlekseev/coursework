@@ -54,9 +54,15 @@ class VkNotify():
 		# print(data)
 
 	def is_ValidId(self,id_vk,key):
+		print("VALID ID VK",id_vk,key)
+		print(self.get_last_meassage(id_vk))
+		print(key)
 		if self.get_last_meassage(id_vk) == key:
+			print("T")
 			return True
+
 		else:
+			print("F")
 			return False
 
 		# Получить последнее сообщение с ключом

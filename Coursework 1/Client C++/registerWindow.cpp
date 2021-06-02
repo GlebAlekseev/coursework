@@ -20,6 +20,7 @@ registerWindow::~registerWindow()
 
 void registerWindow::on_pushButton_clicked() // Смена окна
 {
+    ui->msg_info2->setText("");
     this->close(); // Закрываем окно
     emit firstWindow(); // И вызываем сигнал на открытие главного окна
 
@@ -114,6 +115,7 @@ void registerWindow::replyFinishedR() // Вызывается по заверш�
               settings.endGroup();
 
 
+              ui->msg_info2->setText("");
               this->close(); //
               emit WorkSWindow();
 //content.data()  hash

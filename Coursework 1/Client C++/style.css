@@ -1,8 +1,3 @@
-#label {
-text-align: center;
-/*background-color: #00ff00;*/
-
-}
 #login_inp{
 height: 26px;
 font-size: 1.3858em;
@@ -10,12 +5,9 @@ font-size: 1.3858em;
 border: 1px solid #c3cfd8;
 margin: 0;
 border-radius: 6px;
-box-sizing: border-box;
 font-style: normal;
 background-color: #ffffff;
 border: 1px solid #cccccc;
-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-transition: all .2s;
 padding-left:20px;
 color: #474747;
 }
@@ -27,12 +19,9 @@ font-size: 1.3858em;
 border: 1px solid #c3cfd8;
 margin: 0;
 border-radius: 6px;
-box-sizing: border-box;
 font-style: normal;
 background-color: #ffffff;
 border: 1px solid #cccccc;
-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-transition: all .2s;
 padding-left:20px;
 color: #474747;
 }
@@ -44,18 +33,14 @@ font-size: 1.3858em;
 border: 1px solid #c3cfd8;
 margin: 0;
 border-radius: 6px;
-box-sizing: border-box;
 font-style: normal;
 background-color: #ffffff;
 border: 1px solid #cccccc;
-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-transition: all .2s;
 padding-left:20px;
 color: #474747;
 }
 #enter_btn{
 
-        box-sizing: border-box;
         padding: 0 25px;
         outline: none;
         border: 1px solid #fff;
@@ -102,13 +87,6 @@ background-color: #DBE9FF;
 
 
         }
-/*QScrollBar:horizontal {
-            border: none;
-            background: gray;
-            border-radius: 1px;
-            height: 2px;
-            margin: 0px 0px 0px 0px;
-        }*/
 
 QScrollBar::handle:vertical
 {
@@ -213,7 +191,6 @@ QPushButton{
     border-radius: 3px;
     border-style: solid;
     border-width: 1px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
     color: #333333;
         text-decoration:none;
     font-size: 14px;
@@ -222,7 +199,6 @@ QPushButton{
     padding: 4px 12px;
     text-align: center;
 
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
     vertical-align: middle;
 }
 
@@ -306,32 +282,6 @@ QComboBox::down-arrow:on { /* shift the arrow when popup is open */
 
 
 
-/*QSpinBox {padding-left: 17px; color: white; \
-border: 2px groove #CD5728; border-radius: 5px; \
-text-color: black; } \
-\
-QSpinBox::up-button {subcontrol-origin: margin; subcontrol-position: top left; \
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FDFDFC, stop: 1 #F7F7F6); \
-border-top-left-radius: 5px; border-width: 1px; width: 14px; \
-border-left: 1px solid #BEBEBE; border-top: 1px solid #BEBEBE; border-right: 1px solid #BEBEBE; border-bottom: 0px;} \
-\
-QSpinBox::down-button {subcontrol-origin: margin; subcontrol-position: bottom left; \
-background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #F7F7F6, stop: 1 #E4E2E0); \
-border-bottom-left-radius: 5px; border: 1px solid red; width: 14px; \
-border-left: 1px solid #BEBEBE; border-bottom: 1px solid #BEBEBE; border-right: 1px solid #BEBEBE; border-top: 0px;} \
-\
-QSpinBox::up-arrow { background-color: transparent; border-left: 2px solid none; \
-border-right: 2px solid none; border-bottom: 2px solid #808080; width: 0px; height: 0px; } \
-\
-QSpinBox::down-arrow { background-color: transparent; border-left: 3px solid none; \
-border-right: 3px solid none; border-top: 3px solid #808080; width: 0px; height: 0px; } \
-\
-QSpinBox::up-button:pressed { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #D1CECC, stop: 1 #EEEDEC); } \
-\
-QSpinBox::down-button:pressed { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,  stop: 0 #D2D0CC, stop: 1 #E9E7E6); } \*/
-
-
-
 QTabWidget::pane {
   border: 1px solid lightgray;
   top:-1px;
@@ -372,7 +322,6 @@ border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) #B3B3B3;
 border-radius: 3px;
 border-style: solid;
 border-width: 1px;
-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 color: #333333;
     text-decoration:none;
 font-size: 14px;
@@ -380,8 +329,6 @@ line-height: 20px;
 
 padding: 4px 12px;
 text-align: center;
-
-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 vertical-align: middle;
 
 }
@@ -395,7 +342,6 @@ border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) #B3B3B3;
 border-radius: 3px;
 border-style: solid;
 border-width: 1px;
-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
 background-color: #fff;
 
 padding:5px;
@@ -415,28 +361,6 @@ min-height:15px;
 border:none;
 }
 
-/*QLineEdit{
-border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) #B3B3B3;
-border-radius: 3px;
-border-style: solid;
-border-width: 1px;
-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
-background-color: #fff;
-
-padding:5px;
-padding-left:15px;
-padding-right:10px;
-
-
-color:#526060;
-
-text-align: left;
-
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-height:15px;
-
-}*/
 
 
 #search_request:hover,#tsearch_request_:focus,#search_request_:hover{
@@ -447,149 +371,18 @@ border:2px solid teal;}
 
 
 
-
-#img{
-min-width:70px;
-text-align:center;
-}
-
-#name{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:90px;
-text-align:center;
-
-}
-#brand{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:90px;
-text-align:center;
-}
-#cost{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:40px;
-text-align:center;
-}
-#sale{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:40px;
-text-align:center;
-}
-#comments{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:40px;
-text-align:center;
-}
-#rating{
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:40px;
-text-align:center;
-}
-
-
-
-
-
-
-
-
-#img_1_,#img_2_ {
-padding-left:10px;
-padding-right:10px;
-text-align:center;
-}
-
-#name_1,#name_6 {
-padding-left:1px;
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:70px;
-max-width:70px;
-text-align:center;
-}
-
-#brand_1,#brand_6 {
-padding-left:1px;
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:50px;
-max-width:50px;
-text-align:center;
-}
-#cost_1,#cost_6 {
-padding-left:1px;
-font-family: 'Open Sans', sans-serif;
-font-size: 12px;
-min-width:40px;
-max-width:40px;
-text-align:center;
-}
-
-
-/* Header */
-/*#header_it{
-background-color: red;
-color: yellow;
-}*/
-
-/* Bodys */
-#body_i_1{
-
-border-radius: 4px;
-
-}
-#body_i_2{
-border-radius: 4px;
-
-}
-
-#name {
-
-
-}
-
-
 #scrollAreaWidgetContents_2 QTextEdit{
 border:none;
 
 color: #001916;
 }
 
-/*#body__1{
 
-border-bottom: 1px solid #001D4D;
-}*/
-#body__1:hover{
-color:red;
-}
-
-
-/*#scrollAreaWidgetContents_2 QWidget{
-color:red;
-
-}*/
-/*#scrollAreaWidgetContents_2 QWidget:hover{
-color:#009985;
-
-}*/
 
 #scrollAreaWidgetContents_2 QWidget:hover{
 color:#009985;
 
 }
-
-
-
-/*#bgitems_2 QWidget:hover QPlainTextEdit{
-color:#009985;
-
-}*/
-
 
 
 #tble_hist_cst,#t_tble_hist_cst_2{
@@ -602,11 +395,8 @@ margin-top:10px;
 
 QTableView{
 margin-left: 30px;
-
 }
-/*QTableWidget{
-border: 1px solid gray;
-}*/
+
 QHeaderView::section
 {
 background-color: purple;

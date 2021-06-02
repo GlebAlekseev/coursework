@@ -21,6 +21,8 @@ class DataPerson():
 		cursor.execute('SELECT * FROM users_settings WHERE link_vk=?', (user_id, ))
 		settings = cursor.fetchone()
 		if settings is None:
+			connect.commit()
+			connect.close()	
 			return None
 		else:
 			cursor.execute('SELECT * FROM users_settings WHERE link_vk=?', (user_id, ))
@@ -33,18 +35,15 @@ class DataPerson():
 		connect = sqlite3.connect("data.db") 
 		connect.isolation_level= 'DEFERRED'
 		cursor = connect.cursor()
-		# print(login,Mid, "$")
 		info = cursor.execute('SELECT * FROM user_tracking WHERE login=? AND Mid =?' , (login,Mid,))
 		if info.fetchone() is None:
 			
 			#insert
 			cursor.execute("INSERT INTO user_tracking  (login,Mid,tracking)VALUES (?,?,?)", (login,Mid,0))
-			# print("220")
 			connect.commit()
 			connect.close()	
 			return "220"
 		else:
-			# print("221")
 			connect.commit()
 			connect.close()	
 			return "221"
@@ -80,6 +79,8 @@ class DataPerson():
 
 		info = cursor.execute('SELECT * FROM user_tracking WHERE login=? AND Mid =?' , (login,Mid,))
 		if info.fetchone() is None:
+			connect.commit()
+			connect.close()	
 			return "9010"
 
 
@@ -102,10 +103,10 @@ class DataPerson():
 		connect = sqlite3.connect("data.db") 
 		connect.isolation_level= 'DEFERRED'
 		cursor = connect.cursor()
-		# print("######BOOL ", bool_)
-
 		info = cursor.execute('SELECT * FROM user_tracking WHERE login=? AND Mid =?' , (login,Mid,))
 		if info.fetchone() is None:
+			connect.commit()
+			connect.close()	
 			return "901"
 
 
@@ -146,7 +147,6 @@ class DataPerson():
 		for element in data:
 			connect.commit()
 			connect.close()	
-			print(("=============== ",element[0],element[1],element[2],element[3],element[4]))
 			return (element[0],element[1],element[2],element[3],element[4])
 			
 
@@ -156,6 +156,18 @@ class DataPerson():
 		connect = sqlite3.connect("data.db") 
 		connect.isolation_level= 'DEFERRED'
 		cursor = connect.cursor()
+
+		try:
+			cursor.execute("""CREATE TABLE users_settings
+				(login text, pages text,style text,link_vk text,key_ text)
+				""")
+		except sqlite3.OperationalError:
+			# print("БД уже создана")
+			pass
+		else:
+			# print("Создание БД")
+			pass
+
 		cursor.execute('SELECT * FROM users_settings WHERE login=?', (login, ))
 		if cursor.fetchone() is None: # Если отсутствует
 			cursor.execute("INSERT INTO users_settings  (login,pages,style,link_vk)VALUES (?,?,?,?)", (login,pages,style,link_vk,))
@@ -167,6 +179,16 @@ class DataPerson():
 		connect = sqlite3.connect("data.db") 
 		connect.isolation_level= 'DEFERRED'
 		cursor = connect.cursor()
+		try:
+			cursor.execute("""CREATE TABLE users_settings
+				(login text, pages text,style text,link_vk text,key_ text)
+				""")
+		except sqlite3.OperationalError:
+			# print("БД уже создана")
+			pass
+		else:
+			# print("Создание БД")
+			pass
 		cursor.execute('SELECT * FROM users_settings WHERE login=?', (login, ))
 		if cursor.fetchone() is None: # Если отсутствует
 			connect.commit()

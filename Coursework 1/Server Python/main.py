@@ -5,8 +5,8 @@ import logging
 import re
 import os
 import platform
-from selenium import webdriver
-from seleniumwire import webdriver  
+# from selenium import webdriver
+# from seleniumwire import webdriver  
 import sqlite3
 import urllib3
 import certifi
@@ -450,8 +450,19 @@ class MainStream():
 		        headers=True 
 		    )
 			session.headers = headers.generate()
+			Mid ="Ошибка"
+			name ="Ошибка"
+			brand ="Ошибка"
+			price ="Ошибка"
+			url_img ="Ошибка"
+			url_profile ="Ошибка"
+			url_logo_brand ="Ошибка"
 			for item in resF:
 				# print(item)
+				print("in item")
+				
+
+
 				if str(item[2]).find("W_iD") != -1:
 					newurl = url_W.replace("IDS",str(item[2])[4:])
 					res = session.get(url=newurl)
@@ -469,11 +480,14 @@ class MainStream():
 
 						
 				if str(item[2]).find("E_iD") != -1:
+					print("E_iD",url_E,str(item[2])[4:])
 					newurl = url_E.replace("IDS",str(item[2])[4:])
 					res = session.get(url=newurl)
 					res.raise_for_status()
 					sd = json.loads(res.text)
-					if len(sd) == 0:
+					# print("==========",sd)
+					if len(sd[0]) == 0:
+						print("Eldoreado error link")
 						continue
 					Mid = 'E_iD'+str(sd[0]["ItemId"])
 					# print(sd,"Eid")
@@ -505,6 +519,7 @@ class MainStream():
 					fin_data_checked.append((Mid,name,brand,price,url_img,url_profile,url_logo_brand))	
 					print(url_img)
 		get_data(resF)
+		print(resF,"resF")
 		connect.close()
 		# redisDB = redis.Redis(db=1)
 		def sort_list_data_name(data,ASC = True):
@@ -537,7 +552,8 @@ class MainStream():
 
 		sort_list_data_name(fin_data_checked,SORTAZ) # ASC сортировка
 		sort_list_data_price(fin_data_checked,SORT12) # 12 сортировка
-		return json.dumps(fin_data_checked )
+		print(json.dumps(fin_data_checked))
+		return json.dumps(fin_data_checked)
 
 
 	def get_history(self):
@@ -641,6 +657,7 @@ class MainStream():
 
 		if link.find("my-shop.ru") != -1:
 			Mid = "M_iD"+str(link.split("/")[-1].split(".")[0])
+			print("MID",Mid)
 
 		if link.find("eldorado.ru") != -1:
 			session = requests.Session()
@@ -658,6 +675,7 @@ class MainStream():
 
 		try:
 			data = DataItem().get(Mid)
+			print("data",data, len(data))
 		except IndexError:
 			# print("Пропуск", Mid)
 			return "213"
@@ -666,10 +684,11 @@ class MainStream():
 			# сделать dateitem гет b try есл иошибка то выход с 213
 		# Доабвление по миду и логину в  отслежку
 		# print("Mid",Mid)
-		if len(Mid) != 0:
+		if len(Mid) != 0 and len(data) != 0:
 			if DataPerson().insert_Mid(login,Mid) == "220":
 				# print("210")
-				dat = data[0]["name"] +"/"+data[0]["brand"]
+				print(data)
+				dat = data[0]["name"] +" / "+data[0]["brand"]
 				return dat
 			else:
 				# print("211")
@@ -690,6 +709,7 @@ class MainStream():
 
 		# генерирование ключа
 		data = DataPerson().get(login)[4]
+		print("get key ",data)
 
 		if data is None:
 			DataPerson().edit(login,key_=key)
@@ -703,7 +723,7 @@ class MainStream():
 		id_vk = json.loads(request.data.decode('UTF-8'))['id_vk'] 
 		if VkNotify(c.token).is_ValidId(id_vk,self.get_keyVk(login)):
 			DataPerson().edit(login,link_vk=id_vk)
-			VkNotify(c.token).send("Привет, "+str(login)+", я Сергей",id_vk)
+			VkNotify(c.token).send("Привет, "+str(login),id_vk)
 			return "710"
 		else:
 			return "711"
@@ -755,34 +775,12 @@ class MainStream():
 
 		Collectors().run(self.New_updated_data)
 		Updating_tracked_data().run()
-		Updating_Master_data().run(self.New_updated_data) # NewData это данные которые нужно сохранять # ИСПОЛЬЗОВАТЬ ТОЛЬКО КОГДА ИСПРАВЛЮ ПОДБОР КЛЮЧ СЛОВ ПОИСКА
-
-
-
-
-
-		# print("start")
+		Updating_Master_data().run(self.New_updated_data) # NewData это данные которые нужно сохранять # ИСПОЛЬЗОВАТЬ ТОЛЬКО КОГДА ИСПРАВЛЮ ПОДБОР КЛЮЧ СЛОВ ПОИСК
 		
 		self.app.start()
-
-		# ЗАПУСК МОДУЛЕЙ СЕРВЕРА
-		# Запускает апдейтер и коллектор
-
-
-
-
-
-
-
-print(__name__,"NAME")
 
 
 
 if __name__ == '__main__':
-	# print("main")
-	# Updating_Master_data().run() 
+ 
 	MainStream().run()
-
-	 # Удаляет плохие данные
-	# Обновляет данные
-	# app.run(debug=True, port=5000,threaded=True) # Ожидает запросы с клиента 

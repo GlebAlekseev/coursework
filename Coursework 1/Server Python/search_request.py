@@ -50,7 +50,6 @@ class Create_a_database_based_on_the_search_query:
 			
 			for item in suggestions:
 				vector_sg = str(item["name"]).split(" ")
-				# print(item)
 				for inItem in vector_sg:
 					for el in lst_req_text:
 						if inItem.find(el) != -1:
@@ -66,7 +65,6 @@ class Create_a_database_based_on_the_search_query:
 		data_find_filters_decode = []
 		data_find_filters_decode = json.loads(res.text)
 		if len(data_find_filters_decode) == 0: # Пустой ответ от Wildberries
-			print("Ничего не найдено Wildberries")
 			# идет запрос на 'https://www.wildberries.ru/search/brands-suggest?query=REQUEST' - 	suggestions	 рекурсивно вызываю запрос 
 			df = self.request_name.split(" ")
 			for el in df:
@@ -75,17 +73,14 @@ class Create_a_database_based_on_the_search_query:
 			res = self.session.get(url=newurl)
 			res.raise_for_status()
 			self.suggestions = json.loads(res.text)
-			# print("QQQQ",self.suggestions)
 
 			for item in self.suggestions:
-				# print(item["name"])
 				Create_a_database_based_on_the_search_query(item["name"],self.New_updated_data).search_start(a,self.Wild,self.ELD,self.MShop)
 
 
 
 		else:
 			i=0
-			# print("gjbcr")
 			page_threads = []
 			def PageInWild_d(a):
 				if data_find_filters_decode["query"].find("subject=") != -1:
@@ -122,9 +117,6 @@ class Create_a_database_based_on_the_search_query:
 					url_profile = "https://www.wildberries.ru/catalog/"+str(item["id"]) +"/detail.aspx?"
 					url_brand_logo = "https://images.wbstatic.net/brands/small/new/" + str(item["siteBrandId"])+ ".jpg"
 					url_img =  "https://images.wbstatic.net/c516x688/new/"+str(smart_id)+"/"+str(item["id"])+"-1.jpg"
-					# print("=======",item["sale"],"=======")
-					# print(item["sale"])
-					# print(item["salePriceU"])
 					self.products.update({'W_iD'+str(item["id"]):	{'id':item["id"],'name':item["name"],'brandId':item["brandId"],'subjectId':item["subjectId"],
 																			 'brand':item["brand"],'sale':str(int(item["sale"])),'price':str(int(item["salePriceU"])/100),'price_full':str(int(item["priceU"])/100),
 																			 'pics':item["pics"],'rating':item["rating"],'feedbacks':item["feedbacks"],
@@ -151,9 +143,7 @@ class Create_a_database_based_on_the_search_query:
 			if a >250:
 				a=250
 				
-			# print("max item",a)
 			while i<int(a):
-				# print(i)
 				
 				page_threads.append(Thread(target=PageInWild_d, args=(i, )))
 				page_threads[i].start()
@@ -175,10 +165,7 @@ class Create_a_database_based_on_the_search_query:
 			container = soup.select('p.Wi') # не стабильно
 			Max_pages ="10"
 
-			# print(container,"container Max_Pages")
-			# print(Max_pages,"Max_Pages")
 			if not Max_pages.isdigit() :
-				print("Ничего не найдено Eldorado")
 				return
 
 			newurl = self.links_storage['eldorado'][0].replace("REQUEST",str(self.request_name))
@@ -219,17 +206,14 @@ class Create_a_database_based_on_the_search_query:
 
 				a = int(Max_pages)/50 + 1
 
-			# print(a)
 			while i<a:
-				# print("F")
-				# print(i)
+
 				page_threads.append(Thread(target=PageInEld_d, args=(i, )))
 				page_threads[i].start()
 				i+=1
 			j=0
 			for page_th in page_threads:
 				page_th.join()
-				# print(j,end = ' ')
 				j+=1
 				i+=1
 
@@ -244,7 +228,6 @@ class Create_a_database_based_on_the_search_query:
 		bodyM = urllib.parse.quote(str(self.request_name))
 		page_threads = []
 		def PageInMshop_d(a):
-			# print("page",a)
 			newurl_In = newurl.replace("PAGE",str(i+1))
 			resp = http.request(
 				'POST',
@@ -256,7 +239,6 @@ class Create_a_database_based_on_the_search_query:
 				if data['products'] is None:
 					pass
 			except KeyError:
-				# print("-page ", a)
 				return
 
 			last_history = str(time.time())
@@ -264,23 +246,19 @@ class Create_a_database_based_on_the_search_query:
 			# delete_tr=1
 			for item in data['products']:
 				u+=1
-				# print(item['product_id'],item['cost'],item['title'],item['ga_item']['id'],item['ga_item']['brand'])
+			
 				if self.st == -2:
 					self.New_updated_data.append({'id':'M_iD'+str(item['ga_item']['id']),'price':item["cost"],'last_history':last_history})
 					continue
-				# if delete_tr:
-				# 		print(item)
-				# 		delete_tr = 0
+
 				url_profile = "https://my-shop.ru/shop/product/"+str(item["product_id"])+".html"
 				url_img = "http://" + str(item["image"]["href"][2:])
-				# print(url_profile)
-				# print(url_img)
+
 				self.products.update({'M_iD'+str(item['ga_item']['id']):	{'id':item['ga_item']['id'],'name':item['title'],'brand':item['ga_item']['brand'],'productIdd':item['product_id'],
 																	 'price':str(int(item["cost"])),
 																			 'last_history':last_history,
 																	 'url_profile':url_profile,'url_img':url_img
 																			 					}})
-			# print("myShop ",u," позиций собрано.")
 		
 		newurl_InH = newurl.replace("PAGE",str(1))
 		resp = http.request(
@@ -288,14 +266,10 @@ class Create_a_database_based_on_the_search_query:
 				newurl_InH,
 				body=encoded_data,
 				headers={'Content-Type': 'application/json'})
-		# print("start",resp.data.decode('utf-8'),"end")
 		data = json.loads(resp.data.decode('utf-8'))
-		# print(a)
-		# print(data['meta']['total']/40)
 		if int(data['meta']['total']) == 0:
 			print("Ничего не найдено myShop")
 
-			# идет запрос на 'https://www.wildberries.ru/search/brands-suggest?query=REQUEST' - 	suggestions	 рекурсивно вызываю запрос 
 			df = self.request_name.split(" ")
 			for el in df:
 				newurl = 'https://wbxsearch.wildberries.ru/suggests/common?query=REQUEST'.replace("REQUEST",str(el))
@@ -303,10 +277,7 @@ class Create_a_database_based_on_the_search_query:
 			res = self.session.get(url=newurl)
 			res.raise_for_status()
 			self.suggestions = json.loads(res.text)
-			# print("QQQQ",self.suggestions)
-
 			for item in self.suggestions:
-				# print(item["name"])
 				Create_a_database_based_on_the_search_query(item["name"],self.New_updated_data).search_start(a,self.Wild,self.ELD,self.MShop)
 
 
@@ -316,16 +287,13 @@ class Create_a_database_based_on_the_search_query:
 		if int(data['meta']['total'])/40 < a or a==-1:
 			a = int(data['meta']['total'])/40
 
-		# print(a)
 		while i<a:
-			# print(i)
 			page_threads.append(Thread(target=PageInMshop_d, args=(i, )))
 			page_threads[i].start()
 			i+=1
 		j=0
 		for page_th in page_threads:
 			page_th.join()
-			# print(j,end = ' ')
 			j+=1
 
 
@@ -340,36 +308,25 @@ class Create_a_database_based_on_the_search_query:
 		self.Wild= Wild
 		self.ELD= ELD
 		self.MShop= MShop
-		# print("serarch start",self.New_updated_data)
-
-		# print("INITSEARCH")
-		# self.get_positions()
-
 		self.st = 0
 		if pages == -2:
 			self.st = pages
 			pages = -1
 		# Получение активных запросов
 		requests_names = self.redisDB.hgetall('requests_names')
-		# print(requests_names)
 		resR = []
 		for key in requests_names:
 			tmp = requests_names[key].decode('UTF-8')
 			resR.append(key.decode('unicode_escape'))
 		#Проврека на повторный запрос
 		status_repeat = False
-		# print(resR)
 		for req_name in resR:
-			# print(req_name)
 			if '"'+self.request_name+'"' == req_name:
-				# print("REPEAT")
 				status_repeat = True
-			# print("CHECK = ",'"'+self.request_name+'"' ,"==", req_name)
 		if status_repeat and self.st != -2:
 			pass
 		else:
 			#ПАРСИНГ
-			# print("pasrsing _")
 			if Wild:
 				WildBerries = Thread(target=self.WildBerries_add, args=(pages, ))
 				WildBerries.start()
@@ -410,6 +367,4 @@ class Create_a_database_based_on_the_search_query:
 			tmp = result[key].decode('UTF-8')
 			resW.append(key.decode('UTF-8'))
 
-		print("Собрано",len(resW),"единиц товара. По запросу",self.request_name)
-		print("serarch end",len(self.New_updated_data))
 		self.redisDB.close()

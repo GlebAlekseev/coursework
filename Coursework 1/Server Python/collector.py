@@ -16,7 +16,6 @@ class Collectors: # УДАЛЯЕТ ДАННЫЕ ИЗ БД ДЛЯ ПОИСКА (�
 				tmp = result[key].decode('UTF-8')
 				if float(tmp.strip('"'))+60*10 <time.time():
 					self.redisDB.hdel("requests_names",key)
-					print("#delete ",key.decode('unicode_escape'))
 			time.sleep(60*10) # Каждые 10 мин включается
 	# ЗАПУСК Сборщик мусора, Товаров last_history # Каждые 10 мин включается
 	def bad_position_collector(self,New_updated_data):
@@ -37,7 +36,6 @@ class Collectors: # УДАЛЯЕТ ДАННЫЕ ИЗ БД ДЛЯ ПОИСКА (�
 					self.redisDB.hdel("products",key)
 
 			print(" осталось ",len(self.redisDB.hgetall('products')))
-			# print("ОСТАТОК",self.redisDB.hgetall('products'))
 			time.sleep(60*10)
 
 	def run(self,New_updated_data):
